@@ -1,10 +1,8 @@
 module RedmineWebhook
   class WebhookListener < Redmine::Hook::Listener
-
     def skip_webhooks(context)
       return true unless context[:request]
       return true if context[:request].headers['X-Skip-Webhooks']
-
       false
     end
 
@@ -53,23 +51,30 @@ module RedmineWebhook
     end
 
     private
+
     def issue_to_json(issue, controller)
       {
-        :payload => {
-          :action => 'opened',
-          :issue => RedmineWebhook::IssueWrapper.new(issue).to_hash,
-          :url => controller.issue_url(issue)
+        title: "Redmine Issue ##{issue.id}",
+        body: {
+          text: "New issue created: #{issue.subject}\n\nDescription:\n#{issue.description}"
+        },
+        button: {
+          label: "View Issue",
+          url: controller.issue_url(issue)
         }
       }.to_json
     end
-
+   
     def journal_to_json(issue, journal, controller)
+      notes = journal.notes.present? ? "\n\nNotes:\n#{journal.notes}" : ""
       {
-        :payload => {
-          :action => 'updated',
-          :issue => RedmineWebhook::IssueWrapper.new(issue).to_hash,
-          :journal => RedmineWebhook::JournalWrapper.new(journal).to_hash,
-          :url => controller.nil? ? 'not yet implemented' : controller.issue_url(issue)
+        title: "Redmine Issue ##{issue.id} Updated",
+        body: {
+          text: "Issue updated: #{issue.subject}#{notes}"
+        },
+        button: {
+          label: "View Issue",
+          url: controller.nil? ? issue.project.url : controller.issue_url(issue)
         }
       }.to_json
     end
@@ -84,7 +89,8 @@ module RedmineWebhook
               req.body = request_body
             end
           rescue => e
-            Rails.logger.error e
+            Rails.logger.error "Failed to send webhook: #{e.message}"
+            Rails.logger.error e.backtrace.join("\n")
           end
         end
       end
