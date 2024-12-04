@@ -7,12 +7,12 @@ else
 end
 
 Redmine::Plugin.register :redmine_webhook do
-  name 'Redmine Webhook plugin'
-  author 'suer'
-  description 'A Redmine plugin posts webhook on creating and updating tickets'
-  version '0.0.5'
-  url 'https://github.com/suer/redmine_webhook'
-  author_url 'http://d.hatena.ne.jp/suer'
+  name 'Redmine Webhook plugin for LINEWORKS'
+  author 't.shiraki'
+  description 'Redmine webook plugin for LINEWORKS integration'
+  version '0.0.1'
+  url 'https://github.com/acorns-shiraki/redmine_webhook'
+  author_url ''
   project_module :webhooks do
     permission :manage_hook, {:webhook_settings => [:index, :show, :update, :create, :destroy]}, :require => :member
   end
