@@ -3,10 +3,6 @@ Redmine WebHook Plugin
 
 A Redmine plugin posts webhook on creating and updating tickets.
 
-Author
-------------------------------
-* @suer
-
 Install
 ------------------------------
 Type below commands:
